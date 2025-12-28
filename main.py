@@ -2,6 +2,7 @@ import pygame
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT 
 from logger import log_state
 from player import Player
+from asteroidfield import AsteroidField, Asteroid
 
 def main():
     # Initialise the Pygame module
@@ -9,11 +10,15 @@ def main():
     # Define groups and group members
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
+    asteroids = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
+    Asteroid.containers = (asteroids, updatable, drawable)
+    AsteroidField.containers = (updatable,)
     # Setting game resolution
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     # Creating player and definingstarting position based on resolution
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+    asteroid_field = AsteroidField()
     # Setting some variables for in the loop
     clock = pygame.time.Clock()
     dt = 0
@@ -39,8 +44,6 @@ def main():
         # Refresh the screen
         pygame.display.flip()
         # Pause the game for 1/60th of a second
-        clock.tick(60)
-        
         dt = clock.tick(60) / 1000
 
 

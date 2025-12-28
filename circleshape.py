@@ -1,3 +1,4 @@
+# Code provided by boot.dev course material
 import pygame
 
 # Base class for game objects
