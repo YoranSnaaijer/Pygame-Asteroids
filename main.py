@@ -27,6 +27,9 @@ def main():
                 return
         # Set the background color
         screen.fill("black")
+        # Update the position of the ship
+        player.update(dt)
+        # Render the player
         player.draw(screen)
         # Refresh the screen
         pygame.display.flip()
