@@ -1,13 +1,16 @@
 import pygame
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT 
 from logger import log_state
-
+from player import Player
 
 def main():
     #Initialise the Pygame module
     pygame.init()
-    # Setting objects used in the loop
+    # Setting game resolution
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    # Setting player starting position based on resolution
+    player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+    # Setting some variables for in the loop
     clock = pygame.time.Clock()
     dt = 0
     #Print some info to the CLI
@@ -24,6 +27,7 @@ def main():
                 return
         # Set the background color
         screen.fill("black")
+        player.draw(screen)
         # Refresh the screen
         pygame.display.flip()
         # Pause the game for 1/60th of a second
