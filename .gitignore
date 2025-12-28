@@ -1,5 +1,8 @@
 game_state.jsonl
 .python-version
+pyproject.toml
+game_events.jsonl
+uv.lock
 
 # Python-generated files
 __pycache__/
