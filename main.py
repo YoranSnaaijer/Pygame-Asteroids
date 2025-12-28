@@ -4,11 +4,15 @@ from logger import log_state
 from player import Player
 
 def main():
-    #Initialise the Pygame module
+    # Initialise the Pygame module
     pygame.init()
+    # Define groups and group members
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    Player.containers = (updatable, drawable)
     # Setting game resolution
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    # Setting player starting position based on resolution
+    # Creating player and definingstarting position based on resolution
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
     # Setting some variables for in the loop
     clock = pygame.time.Clock()
@@ -28,9 +32,10 @@ def main():
         # Set the background color
         screen.fill("black")
         # Update the position of the ship
-        player.update(dt)
+        updatable.update(dt)
         # Render the player
-        player.draw(screen)
+        for sprite in drawable:
+            sprite.draw(screen)
         # Refresh the screen
         pygame.display.flip()
         # Pause the game for 1/60th of a second
