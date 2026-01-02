@@ -18,6 +18,8 @@ def main():
 
     # Initialise the Pygame module
     pygame.init()
+    # Initialize font
+    font = pygame.font.SysFont(None, 24)
     # Define groups and group members
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
@@ -35,10 +37,12 @@ def main():
     # Setting some variables for in the loop
     clock = pygame.time.Clock()
     dt = 0
+    score = 0
     #Print some info to the CLI
     print(f"Starting Asteroids with pygame version: {pygame.version.ver}")
     print(f"Screen width: {SCREEN_WIDTH}")
-    print(F"Screen height: {SCREEN_HEIGHT}")
+    print(f"Screen height: {SCREEN_HEIGHT}")
+    print(f"Using {'Colemak' if args.colemak else 'QWERTY'} controls")
 
     while True:
         # Log information to game_state.json1
@@ -54,17 +58,20 @@ def main():
         # Render the player
         for sprite in drawable:
             sprite.draw(screen)
+        # Display score
+        score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+        screen.blit(score_text, (10, 10))
         # Collision detection
         for asteroid in asteroids:
             if player.collides_with(asteroid):
                 log_event("player_hit")
-                print("Game over!")
+                print(f"Game over! Final score: {score}")
                 sys.exit()
             for shot in shots:
                 if shot.collides_with(asteroid):
                     log_event("asteroid_shot")
                     shot.kill()
-                    asteroid.split()
+                    score += asteroid.split() # Update score dynamically based on split result
 
         # Refresh the screen
         pygame.display.flip()
