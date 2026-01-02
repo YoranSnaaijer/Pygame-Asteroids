@@ -1,3 +1,4 @@
+import argparse
 import pygame
 import sys
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT 
@@ -7,6 +8,14 @@ from asteroidfield import AsteroidField, Asteroid
 from shot import Shot
 
 def main():
+    # Parse optional colemak flag to switch keyboard layout
+    parser = argparse.ArgumentParser(description="Run Pygame-Asteroids")
+    parser.add_argument("--colemak", action="store_true", help="use Colemak keyboard layout (default is QWERTY)")
+    args = parser.parse_args()
+    if args.colemak:
+        import constants
+        constants.CONTROLS = constants.COLEMAK_CONTROLS
+
     # Initialise the Pygame module
     pygame.init()
     # Define groups and group members
