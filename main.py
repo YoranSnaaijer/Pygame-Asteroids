@@ -1,7 +1,7 @@
 import argparse
 import pygame
 import sys
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, CONTROLS, COLEMAK_CONTROLS
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, QWERTY_CONTROLS, COLEMAK_CONTROLS
 from logger import log_state, log_event
 from player import Player
 from asteroidfield import AsteroidField, Asteroid
@@ -13,8 +13,9 @@ def main():
     parser = argparse.ArgumentParser(description="Run Pygame-Asteroids")
     parser.add_argument("--colemak", action="store_true", help="use Colemak keyboard layout (default is QWERTY)")
     args = parser.parse_args()
-    if args.colemak:
-        CONTROLS = COLEMAK_CONTROLS
+    
+    # Select controls layout based on argument
+    controls = COLEMAK_CONTROLS if args.colemak else QWERTY_CONTROLS
 
     # Initialise the Pygame module
     pygame.init()
@@ -38,7 +39,7 @@ def main():
     # Setting game resolution
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     # Creating player and defining starting position based on resolution
-    player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+    player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, controls)
     # Setting some variables for in the loop
     clock = pygame.time.Clock()
     dt = 0
@@ -66,7 +67,6 @@ def main():
         # Display score
         score_text = font.render(f"Score: {score}", True, (255, 255, 255))
         screen.blit(score_text, (10, 10))
-
         # Display power-up levels
         y_offset = 40
         speed_text = f"Speed Level: {player.speed_level}"

@@ -1,13 +1,14 @@
 import pygame
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, LINE_WIDTH, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS, CONTROLS, SCREEN_WIDTH, SCREEN_HEIGHT, POWERUP_SPEED_UPGRADE, POWERUP_FIRE_RATE_UPGRADE, POWERUP_INVINCIBILITY_DURATION, POWERUP_RAPID_FIRE_DURATION
+from constants import PLAYER_RADIUS, LINE_WIDTH, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS, SCREEN_WIDTH, SCREEN_HEIGHT, POWERUP_SPEED_UPGRADE, POWERUP_FIRE_RATE_UPGRADE, POWERUP_INVINCIBILITY_DURATION, POWERUP_RAPID_FIRE_DURATION
 from shot import Shot
 
 class Player(CircleShape):
-    def __init__(self, x, y):
+    def __init__(self, x, y, controls):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.cooldown = 0
+        self.controls = controls
         # Power-up effects
         self.speed_multiplier = 1.0
         self.fire_rate_multiplier = 1.0
@@ -70,15 +71,15 @@ class Player(CircleShape):
         keys = pygame.key.get_pressed()
 
         # Use configurable controls for keyboard layout support
-        if keys[CONTROLS["rotate_left"]]:
+        if keys[self.controls["rotate_left"]]:
             self.rotate(-dt)
-        if keys[CONTROLS["rotate_right"]]:
+        if keys[self.controls["rotate_right"]]:
             self.rotate(dt)
-        if keys[CONTROLS["forward"]]:
+        if keys[self.controls["forward"]]:
             self.move(dt)
-        if keys[CONTROLS["back"]]:
+        if keys[self.controls["back"]]:
             self.move(-dt)
-        if keys[CONTROLS["shoot"]]:
+        if keys[self.controls["shoot"]]:
             self.shoot()
         
         self.cooldown -= dt
