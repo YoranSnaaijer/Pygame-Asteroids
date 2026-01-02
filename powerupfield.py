@@ -9,9 +9,10 @@ class PowerUpField(pygame.sprite.Sprite):
         self.spawn_timer = 0.0
 
     def spawn(self, position):
-        # Randomly choose power-up type
-        powerup_types = ["speed_upgrade", "fire_rate_upgrade", "invincibility", "rapid_fire"]
-        powerup_type = random.choice(powerup_types)
+        # Randomly choose power-up type with weights for rarity
+        powerup_types = ["speed_upgrade", "fire_rate_upgrade", "invincibility", "rapid_fire", "multi_shot"]
+        weights = [1, 1, 1, 1, POWERUP_MULTISHOT_SPAWN_CHANCE]  # multi_shot is half as likely
+        powerup_type = random.choices(powerup_types, weights=weights)[0]
         powerup = PowerUp(position.x, position.y, powerup_type)
 
     def update(self, dt):

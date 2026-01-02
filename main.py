@@ -1,7 +1,7 @@
 import argparse
 import pygame
 import sys
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, QWERTY_CONTROLS, COLEMAK_CONTROLS
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, QWERTY_CONTROLS, COLEMAK_CONTROLS, POWERUP_SPEED_COLOR, POWERUP_FIRE_RATE_COLOR, POWERUP_INVINCIBILITY_COLOR, POWERUP_RAPID_FIRE_COLOR, POWERUP_MULTI_SHOT_COLOR
 from logger import log_state, log_event
 from player import Player
 from asteroidfield import AsteroidField, Asteroid
@@ -70,22 +70,32 @@ def main():
         # Display power-up levels
         y_offset = 40
         speed_text = f"Speed Level: {player.speed_level}"
-        if player.invincibility_timer > 0:
-            speed_text += f" (Invincible: {player.invincibility_timer:.1f}s)"
-        speed_display = font.render(speed_text, True, (255, 255, 255))
+        speed_display = font.render(speed_text, True, POWERUP_SPEED_COLOR)
         screen.blit(speed_display, (10, y_offset))
         y_offset += 30
         power_text = f"Power Level: {player.power_level}"
-        if player.rapid_fire_timer > 0:
-            power_text += f" (Rapid Fire: {player.rapid_fire_timer:.1f}s)"
-        power_display = font.render(power_text, True, (255, 255, 255))
+        power_display = font.render(power_text, True, POWERUP_FIRE_RATE_COLOR)
         screen.blit(power_display, (10, y_offset))
+        y_offset += 30
+        multi_shot_text = f"Multi-Shot Level: {player.multi_shot_level}"
+        multi_shot_display = font.render(multi_shot_text, True, POWERUP_MULTI_SHOT_COLOR)
+        screen.blit(multi_shot_display, (10, y_offset))
+        y_offset += 30
+        if player.invincibility_timer > 0:
+            invincibility_text = f"Invincible: {player.invincibility_timer:.1f}s"
+            invincibility_display = font.render(invincibility_text, True, POWERUP_INVINCIBILITY_COLOR)
+            screen.blit(invincibility_display, (10, y_offset))
+            y_offset += 30
+        if player.rapid_fire_timer > 0:
+            rapid_fire_text = f"Rapid Fire: {player.rapid_fire_timer:.1f}s"
+            rapid_fire_display = font.render(rapid_fire_text, True, POWERUP_RAPID_FIRE_COLOR)
+            screen.blit(rapid_fire_display, (10, y_offset))
 
         # Collision detection
         for asteroid in asteroids:
             if player.collides_with(asteroid) and not player.is_invincible():
                 log_event("player_hit")
-                print(f"Game over! Final score: {score}, Speed Level: {player.speed_level}, Power Level: {player.power_level}")
+                print(f"Game over! Final score: {score}, Speed Level: {player.speed_level}, Power Level: {player.power_level}, Multi-Shot Level: {player.multi_shot_level}")
                 sys.exit()
             for shot in shots:
                 if shot.collides_with(asteroid):

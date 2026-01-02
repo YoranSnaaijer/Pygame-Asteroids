@@ -9,13 +9,15 @@ class PowerUp(CircleShape):
         self.powerup_type = powerup_type
         # Set color based on type
         if powerup_type == "speed_upgrade":
-            self.color = (0, 255, 0)  # Green
+            self.color = POWERUP_SPEED_COLOR
         elif powerup_type == "fire_rate_upgrade":
-            self.color = (255, 255, 0)  # Yellow
+            self.color = POWERUP_FIRE_RATE_COLOR
         elif powerup_type == "invincibility":
-            self.color = (255, 0, 255)  # Magenta
+            self.color = POWERUP_INVINCIBILITY_COLOR
         elif powerup_type == "rapid_fire":
-            self.color = (0, 255, 255)  # Cyan
+            self.color = POWERUP_RAPID_FIRE_COLOR
+        elif powerup_type == "multi_shot":
+            self.color = POWERUP_MULTI_SHOT_COLOR
         else:
             self.color = (255, 255, 255)  # White
 

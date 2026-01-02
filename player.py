@@ -1,6 +1,6 @@
 import pygame
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, LINE_WIDTH, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS, SCREEN_WIDTH, SCREEN_HEIGHT, POWERUP_SPEED_UPGRADE, POWERUP_FIRE_RATE_UPGRADE, POWERUP_INVINCIBILITY_DURATION, POWERUP_RAPID_FIRE_DURATION
+from constants import *
 from shot import Shot
 
 class Player(CircleShape):
@@ -17,6 +17,7 @@ class Player(CircleShape):
         # Power-up levels
         self.speed_level = 1
         self.power_level = 1
+        self.multi_shot_level = 0
 
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -42,9 +43,23 @@ class Player(CircleShape):
         if self.cooldown > 0:
             return
         self.cooldown = effective_cooldown
-        shot = Shot(self.position.x, self.position.y)
-        direction = pygame.Vector2(0, 1).rotate(self.rotation)
-        shot.velocity = direction * PLAYER_SHOOT_SPEED
+        
+        if self.multi_shot_level > 0:
+            # Multi-shot: fire multiple bullets in a cone
+            num_bullets = min(POWERUP_MULTI_SHOT_INITIAL_BULLETS + (self.multi_shot_level - 1) * 2, POWERUP_MULTI_SHOT_MAX_BULLETS)
+            total_spread = POWERUP_MULTI_SHOT_BASE_SPREAD + (self.multi_shot_level - 1) * POWERUP_MULTI_SHOT_SPREAD_INCREMENT
+            angle_step = total_spread / (num_bullets - 1) if num_bullets > 1 else 0
+            start_angle = self.rotation - total_spread / 2
+            
+            for i in range(num_bullets):
+                shot = Shot(self.position.x, self.position.y)
+                direction = pygame.Vector2(0, 1).rotate(start_angle + i * angle_step)
+                shot.velocity = direction * PLAYER_SHOOT_SPEED
+        else:
+            # Single shot
+            shot = Shot(self.position.x, self.position.y)
+            direction = pygame.Vector2(0, 1).rotate(self.rotation)
+            shot.velocity = direction * PLAYER_SHOOT_SPEED
 
     def apply_powerup(self, powerup_type):
         if powerup_type == "speed_upgrade":
@@ -60,11 +75,13 @@ class Player(CircleShape):
         return self.invincibility_timer > 0
 
     def draw(self, screen):
-        color = "blue"
+        color = "grey"
         if self.is_invincible():
-            color = "yellow"  # Glow when invincible
+            color = POWERUP_INVINCIBILITY_COLOR  # Light blue glow when invincible
         elif self.rapid_fire_timer > 0:
-            color = "cyan"  # Glow when rapid fire
+            color = POWERUP_RAPID_FIRE_COLOR  # Cyan glow when rapid fire
+        elif self.multi_shot_level > 0:
+            color = POWERUP_MULTI_SHOT_COLOR  # Orange glow when multi-shot
         pygame.draw.polygon(screen, color, self.triangle(), LINE_WIDTH)
     
     def update(self, dt):
@@ -105,6 +122,8 @@ class Player(CircleShape):
             self.invincibility_timer = POWERUP_INVINCIBILITY_DURATION
         elif powerup_type == "rapid_fire":
             self.rapid_fire_timer = POWERUP_RAPID_FIRE_DURATION
+        elif powerup_type == "multi_shot":
+            self.multi_shot_level = min(self.multi_shot_level + 1, POWERUP_MULTI_SHOT_MAX_BULLETS // 2 + 1)  # max level based on bullets
 
     def is_invincible(self):
         return self.invincibility_timer > 0
