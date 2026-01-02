@@ -1,11 +1,12 @@
 import argparse
 import pygame
 import sys
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT 
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, CONTROLS, COLEMAK_CONTROLS
 from logger import log_state, log_event
 from player import Player
 from asteroidfield import AsteroidField, Asteroid
 from shot import Shot
+from powerupfield import PowerUpField, PowerUp
 
 def main():
     # Parse optional colemak flag to switch keyboard layout
@@ -13,8 +14,7 @@ def main():
     parser.add_argument("--colemak", action="store_true", help="use Colemak keyboard layout (default is QWERTY)")
     args = parser.parse_args()
     if args.colemak:
-        import constants
-        constants.CONTROLS = constants.COLEMAK_CONTROLS
+        CONTROLS = COLEMAK_CONTROLS
 
     # Initialise the Pygame module
     pygame.init()
@@ -25,15 +25,20 @@ def main():
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    powerups = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable,)
     Shot.containers = (shots, updatable, drawable)
+    PowerUp.containers = (powerups, updatable, drawable)
+    PowerUpField.containers = (updatable,)
+    asteroid_field = AsteroidField()
+    powerup_field = PowerUpField()
+    
     # Setting game resolution
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     # Creating player and defining starting position based on resolution
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-    asteroid_field = AsteroidField()
     # Setting some variables for in the loop
     clock = pygame.time.Clock()
     dt = 0
@@ -43,7 +48,7 @@ def main():
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
     print(f"Using {'Colemak' if args.colemak else 'QWERTY'} controls")
-
+    
     while True:
         # Log information to game_state.json1
         log_state()
@@ -61,17 +66,39 @@ def main():
         # Display score
         score_text = font.render(f"Score: {score}", True, (255, 255, 255))
         screen.blit(score_text, (10, 10))
+
+        # Display power-up levels
+        y_offset = 40
+        speed_text = f"Speed Level: {player.speed_level}"
+        if player.invincibility_timer > 0:
+            speed_text += f" (Invincible: {player.invincibility_timer:.1f}s)"
+        speed_display = font.render(speed_text, True, (255, 255, 255))
+        screen.blit(speed_display, (10, y_offset))
+        y_offset += 30
+        power_text = f"Power Level: {player.power_level}"
+        if player.rapid_fire_timer > 0:
+            power_text += f" (Rapid Fire: {player.rapid_fire_timer:.1f}s)"
+        power_display = font.render(power_text, True, (255, 255, 255))
+        screen.blit(power_display, (10, y_offset))
+
         # Collision detection
         for asteroid in asteroids:
-            if player.collides_with(asteroid):
+            if player.collides_with(asteroid) and not player.is_invincible():
                 log_event("player_hit")
-                print(f"Game over! Final score: {score}")
+                print(f"Game over! Final score: {score}, Speed Level: {player.speed_level}, Power Level: {player.power_level}")
                 sys.exit()
             for shot in shots:
                 if shot.collides_with(asteroid):
                     log_event("asteroid_shot")
                     shot.kill()
                     score += asteroid.split() # Update score dynamically based on split result
+
+        # Power-up collision detection
+        for powerup in powerups:
+            if player.collides_with(powerup):
+                log_event("powerup_collected")
+                player.apply_powerup(powerup.powerup_type)
+                powerup.kill()
 
         # Refresh the screen
         pygame.display.flip()

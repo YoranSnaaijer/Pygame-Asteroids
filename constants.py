@@ -14,6 +14,14 @@ SHOT_RADIUS = 5
 PLAYER_SHOOT_SPEED = 500
 PLAYER_SHOOT_COOLDOWN_SECONDS = 0.3
 
+# Power-up constants
+POWERUP_RADIUS = 15
+POWERUP_SPAWN_RATE_SECONDS = 5.0
+POWERUP_SPEED_UPGRADE = 1.2  # 20% speed increase
+POWERUP_FIRE_RATE_UPGRADE = 0.8  # 20% faster firing (multiply cooldown by 0.8)
+POWERUP_INVINCIBILITY_DURATION = 5.0
+POWERUP_RAPID_FIRE_DURATION = 10.0
+
 # Control mappings for different keyboard layouts
 QWERTY_CONTROLS = {
     "rotate_left": pygame.K_a,
