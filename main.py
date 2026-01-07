@@ -56,6 +56,7 @@ def main():
         # Close the game when the X is pressed
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                print(f"Game over! Final score: {score}, Speed Level: {player.speed_level}, Power Level: {player.power_level}, Multi-Shot Level: {player.multi_shot_level}")
                 return
         # Set the background color
         screen.fill("black")
@@ -76,6 +77,8 @@ def main():
         power_text = f"Power Level: {player.power_level}"
         power_display = font.render(power_text, True, POWERUP_FIRE_RATE_COLOR)
         screen.blit(power_display, (10, y_offset))
+
+        
         y_offset += 30
         multi_shot_text = f"Multi-Shot Level: {player.multi_shot_level}"
         multi_shot_display = font.render(multi_shot_text, True, POWERUP_MULTI_SHOT_COLOR)
